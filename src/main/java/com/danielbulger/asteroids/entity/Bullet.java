@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class Bullet implements Entity {
 
-	private static final long TIME_TO_LIVE = 3_000;
+	private static final long TIME_TO_LIVE = 175;
 
 	private static final int DEFAULT_RADIUS = 1;
 
@@ -22,12 +22,13 @@ public class Bullet implements Entity {
 
 	private final int radius = DEFAULT_RADIUS;
 
-	private final long creation = System.currentTimeMillis();
+	private final long creation;
 
 	public Bullet(final Game game, final double x, final double y, final double velocityX, final double velocityY) {
 		this.game = game;
 		this.position = new Vector2(x, y);
 		this.velocity = new Vector2(velocityX, velocityY).normalise().multiply(VELOCITY);
+		this.creation = game.getCurrentTick();
 	}
 
 	public Bullet(final Game game, final Vector2 position, final Vector2 velocity) {
@@ -63,6 +64,6 @@ public class Bullet implements Entity {
 	}
 
 	public boolean isDead() {
-		return System.currentTimeMillis() - creation >= TIME_TO_LIVE;
+		return game.getCurrentTick() - creation >= TIME_TO_LIVE;
 	}
 }

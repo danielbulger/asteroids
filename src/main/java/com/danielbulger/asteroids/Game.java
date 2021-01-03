@@ -4,6 +4,7 @@ import com.danielbulger.asteroids.entity.Asteroid;
 import com.danielbulger.asteroids.entity.Bullet;
 import com.danielbulger.asteroids.entity.Entity;
 import com.danielbulger.asteroids.entity.Ship;
+import com.danielbulger.neat.Genome;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -28,17 +29,22 @@ public class Game implements KeyListener {
 
 	private final List<Bullet> bullets = new ArrayList<>();
 
-	private final GameState state = new GameState();
+	private final GameState state;
 
-	public Game(int width, int height) {
+	private final Brain brain;
+
+	public Game(int width, int height, Genome genome) {
 		this.width = width;
 		this.height = height;
+		this.state = new GameState(width, height);
 		this.ship = new Ship(this, width / 2.0, height / 2.0);
+		this.brain = new Brain(genome, ship, state);
 	}
 
 	private void spawnAsteroid() {
 		final double x = random.nextDouble() * width;
-		final double y = random.nextDouble() * height;
+		// Spawn in the top quarter so the ship can't get hit straight away.
+		final double y = random.nextDouble() * (height / 4D);
 
 		final double velocityX = random.nextDouble();
 		final double velocityY = random.nextDouble();
@@ -59,13 +65,13 @@ public class Game implements KeyListener {
 
 	public void update() {
 
-		if (isGameOver()) {
-			return;
-		}
+		state.addTick();
 
 		if (asteroids.isEmpty()) {
 			spawnAsteroids(5);
 		}
+
+		brain.update(asteroids);
 
 		updateEntities();
 
@@ -79,8 +85,6 @@ public class Game implements KeyListener {
 				}
 			}
 		}
-
-		System.out.println(state);
 	}
 
 	private void updateEntities() {
@@ -222,5 +226,9 @@ public class Game implements KeyListener {
 				ship.stopShooting();
 				break;
 		}
+	}
+
+	public int getCurrentTick() {
+		return state.getTicks();
 	}
 }

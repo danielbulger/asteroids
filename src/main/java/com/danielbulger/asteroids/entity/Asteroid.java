@@ -22,9 +22,9 @@ public class Asteroid implements Entity {
 
 	private static final double VELOCITY_STEP = 0.25;
 
-	private static final int HIGHEST_SCORE = 300;
+	private static final int HIGHEST_SCORE = 3;
 
-	private static final int SCORE_PER_HP = 100;
+	private static final int SCORE_PER_HP = 1;
 
 	private final Game game;
 
@@ -101,12 +101,16 @@ public class Asteroid implements Entity {
 		graphics.drawOval(0, 0, diameter, diameter);
 	}
 
+	public boolean checkCollision(Vector2 point) {
+		return Collision.testCircle(position, radius, point);
+	}
+
 	public boolean checkCollision(Ship ship) {
 
 		final Vector2[] points = ship.getPoints();
 
-		for(int i = 0; i < points.length; i += 2) {
-			if(Collision.testLineAndCircle(position, radius, points[i], points[i + 1])) {
+		for (int i = 0; i < points.length; i += 2) {
+			if (Collision.testLineAndCircle(position, radius, points[i], points[i + 1])) {
 				return true;
 			}
 		}

@@ -19,6 +19,10 @@ public class Vector2 {
 		this.set(x, y);
 	}
 
+	public Vector2(Vector2 other) {
+		this(other.getX(), other.getY());
+	}
+
 	public double distance(Vector2 other) {
 		return Math.sqrt(distanceSquared(other));
 	}

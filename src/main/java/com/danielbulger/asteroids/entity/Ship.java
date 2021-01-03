@@ -7,15 +7,15 @@ import java.awt.*;
 
 public class Ship implements Entity {
 
-	private static final long RELOAD_TIME = 70;
+	private static final long RELOAD_TIME = 4;
 
 	private static final double DEFAULT_ROTATION = Math.toRadians(-90D);
 
 	private static final double ROTATION_PER_FRAME = Math.toRadians(5D);
 
-	private static final long IMMUNITY_TIME = 1_500L;
+	private static final long IMMUNITY_TIME = 88;
 
-	private static final double MAX_SPEED = 3.5D;
+	private static final double MAX_SPEED = 2D;
 
 	private final Vector2 position;
 
@@ -31,9 +31,9 @@ public class Ship implements Entity {
 
 	private boolean shooting = false;
 
-	private long lastShot = 0L;
+	private long lastShot = 0;
 
-	private long immunity = 0L;
+	private long immunity = 0;
 
 	public Ship(Game game, double x, double y) {
 		this.game = game;
@@ -66,8 +66,8 @@ public class Ship implements Entity {
 		velocity.set(0.0, 0.0);
 		rotation = DEFAULT_ROTATION;
 		spin = 0.0d;
-		lastShot = 0L;
-		immunity = System.currentTimeMillis();
+		lastShot = 0;
+		immunity = game.getCurrentTick();
 	}
 
 	public void startShooting() {
@@ -79,12 +79,7 @@ public class Ship implements Entity {
 	}
 
 	private void shoot() {
-		if (!shooting) {
-			return;
-		}
-
-		// Can't shoot if we have shot recently.
-		if (System.currentTimeMillis() - lastShot <= RELOAD_TIME) {
+		if (!shooting || !canShoot()) {
 			return;
 		}
 
@@ -94,7 +89,7 @@ public class Ship implements Entity {
 
 		game.addBullet(bullet);
 
-		lastShot = System.currentTimeMillis();
+		lastShot = game.getCurrentTick();
 	}
 
 	@Override
@@ -138,6 +133,10 @@ public class Ship implements Entity {
 		spin = ROTATION_PER_FRAME;
 	}
 
+	public double getRotation() {
+		return rotation;
+	}
+
 	@Override
 	public Vector2 getPosition() {
 		return position;
@@ -172,6 +171,10 @@ public class Ship implements Entity {
 	}
 
 	public boolean isImmune() {
-		return immunity >= 0 && (System.currentTimeMillis() - immunity) <= IMMUNITY_TIME;
+		return immunity >= 0 && (game.getCurrentTick() - immunity) <= IMMUNITY_TIME;
+	}
+
+	public boolean canShoot() {
+		return game.getCurrentTick() - lastShot >= RELOAD_TIME;
 	}
 }

@@ -2,6 +2,17 @@ package com.danielbulger.asteroids;
 
 public class Collision {
 
+	public static boolean testRectangle(Vector2 p, int x, int y, int w, int h) {
+		final boolean inBoundsX = p.getX() >= x && p.getX() <= x + w;
+		final boolean inBoundsY = p.getY() >= y && p.getY() <= y + h;
+
+		return inBoundsX && inBoundsY;
+	}
+
+	public static boolean testCircle(Vector2 circle, double radius, Vector2 p) {
+		return circle.distance(p) <= radius;
+	}
+
 	public static boolean testCircle(Vector2 c1, double r1, Vector2 c2, double r2) {
 		final double distance = c2.distance(c1);
 
