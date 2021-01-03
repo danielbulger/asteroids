@@ -174,6 +174,8 @@ public class Game implements KeyListener {
 		for (final Entity entity : bullets) {
 			render(graphics, entity);
 		}
+
+		brain.render(graphics);
 	}
 
 	public int getWidth() {

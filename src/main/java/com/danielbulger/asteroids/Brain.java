@@ -4,7 +4,7 @@ import com.danielbulger.asteroids.entity.Asteroid;
 import com.danielbulger.asteroids.entity.Ship;
 import com.danielbulger.neat.Genome;
 
-import java.util.Arrays;
+import java.awt.*;
 import java.util.Collection;
 
 public class Brain {
@@ -17,10 +17,27 @@ public class Brain {
 
 	private final GameState state;
 
+	private final Vector2[] sight;
+
 	public Brain(Genome genome, Ship ship, GameState state) {
 		this.genome = genome;
 		this.ship = ship;
 		this.state = state;
+		this.sight = new Vector2[genome.getNumInputs() - 1];
+	}
+
+	public void render(Graphics2D graphics) {
+
+		graphics.setColor(Color.WHITE);
+
+		for(final Vector2 vector : sight) {
+			graphics.drawLine(
+				(int) ship.getPosition().getX(),
+				(int) ship.getPosition().getY(),
+				(int) vector.getX(),
+				(int) vector.getY()
+			);
+		}
 	}
 
 	public void update(Collection<Asteroid> asteroids) {
@@ -35,10 +52,10 @@ public class Brain {
 
 	public float[] observe(Collection<Asteroid> asteroids) {
 
-		final int NUM_RAYS = 8;
+		final double segmentSize = (2 * Math.PI) / sight.length;
 
 		// 1 input for the shoot status and 8 for the direction
-		final float[] inputs = new float[1 + NUM_RAYS];
+		final float[] inputs = new float[1 + sight.length];
 
 		inputs[0] = ship.canShoot() ? 1 : 0;
 
@@ -48,9 +65,11 @@ public class Brain {
 
 			position.set(ship.getPosition());
 
-			final Vector2 direction = Vector2.fromAngle(ship.getRotation() + (i - 1) * (Math.PI / NUM_RAYS));
+			final Vector2 direction = Vector2.fromAngle(ship.getRotation() + ((i - 1) * segmentSize));
 
 			final Asteroid result = castRay(direction, position, asteroids);
+
+			sight[i - 1] = new Vector2(position);
 
 			if (result != null) {
 				inputs[i] = (float) ship.getPosition().distance(position);
