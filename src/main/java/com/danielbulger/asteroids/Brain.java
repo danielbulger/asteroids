@@ -130,7 +130,7 @@ public class Brain {
 
 		if (state.getShotsFired() > 0) {
 			// The accuracy, this is to prevent the ship from spamming bullets without aiming.
-			fitness += (float) state.getShotsHit() / (float) state.getShotsFired();
+			fitness += ((float) state.getShotsHit() / (float) state.getShotsFired()) / 100;
 		}
 
 		return fitness;

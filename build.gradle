@@ -1,5 +1,9 @@
 plugins {
-    id 'java'
+    id 'application'
+}
+
+application {
+    mainClass = 'com.danielbulger.asteroids.Application'
 }
 
 repositories {
